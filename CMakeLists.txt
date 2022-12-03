@@ -22,6 +22,7 @@ IF(NOT CMAKE_BUILD_TYPE)
   #SET(CMAKE_BUILD_TYPE "MINSIZEREL")
 ENDIF()
 
+
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/lib7zip/cmake/Modules/")
 
 OPTION(BUILD_SHARED_LIB "build shared library" OFF)
@@ -43,14 +44,9 @@ SET(P7ZIP_INCLUDE_PATH   "${P7ZIP_SOURCE_DIR}"
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(warnings "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-class-memaccess -Wno-misleading-indentation")
+  set(warnings "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-cast-function-type -Wno-misleading-indentation")
+  set(warningscxx "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-class-memaccess -Wno-misleading-indentation")
   set(no_undefined "-Wl,--no-undefined")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(warnings "-Wall -Wextra -Werror -Wno-inconsistent-missing-override -Wno-unused-parameter")
-  set(no_undefined "-Wl,-undefined,error")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(warnings "/W4 /WX /EHsc")
-    set(no_undefined "")
 endif()
 
 SET(CXX_STANDARD_REQUIRED OFF)
@@ -59,7 +55,7 @@ SET(CXX_EXTENSION NO)
 if (NOT CONFIGURED_ONCE)
     set(CMAKE_C_FLAGS "-fPIC ${warnings}"
         CACHE STRING "Flags used by the compiler during all build types." FORCE)
-    set(CMAKE_CXX_FLAGS "-fPIC ${warnings} -std=c++14"
+    set(CMAKE_CXX_FLAGS "-fPIC ${warningscxx} -std=c++14"
         CACHE STRING "Flags used by the compiler during all build types." FORCE)
     set(CMAKE_LINK_FLAGS "${no_undefined}"
         CACHE STRING "Flags used by the linker during all build types." FORCE)
@@ -85,16 +81,29 @@ MAKE_DIRECTORY(${FLYWAVE_LIBRARY_OUTPUT_PATH})
 SET(FLYWAVE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
 SET(FLYWAVE_LIBRARY_DIRS "")
 
+# p7zip
+IF(NOT P7ZIP_INCLUDE)
+  ADD_SUBDIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/lib7zip/third_party/p7zip/CPP/7zip/CMAKE")
+
+  LIST(APPEND FLYWAVE_LIBRARY_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib7zip/third_party/p7zip/CPP/7zip/CMAKE/Format7zFree/")
+
+  LIST(APPEND FLYWAVE_LIBRARY_DEPES "7zip")
+
+  SET(P7ZIP_INCLUDE YES)
+ENDIF()
+
 # lib7zip
-IF(NOT LIB&ZIP_INCLUDE)
+IF(NOT LIB7ZIP_INCLUDE)
   LIST(APPEND FLYWAVE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib7zip/src/")
 
   LIST(APPEND FLYWAVE_LIBRARY_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib7zip/src/")
 
   LIST(APPEND FLYWAVE_LIBRARY_DEPES "7zip")
 
-  SET(ZIP_INCLUDE YES)
+  SET(LIB7ZIP_INCLUDE YES)
 ENDIF()
+
+
 
 foreach(LIBDIR ${FLYWAVE_LIBRARY_DIRS})
   INSTALL(

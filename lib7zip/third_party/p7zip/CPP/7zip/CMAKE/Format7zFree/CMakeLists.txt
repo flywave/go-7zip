@@ -16,7 +16,7 @@ IF(APPLE)
   FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation )
 ENDIF(APPLE)
 
-add_library(7z MODULE
+add_library(7z STATIC
 
   "../../../../C/7zBuf2.c"
   "../../../../C/7zCrc.c"
