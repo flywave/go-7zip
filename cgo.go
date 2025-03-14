@@ -3,7 +3,8 @@ package lib7zip
 // #cgo CFLAGS: -I ./lib
 // #cgo linux CXXFLAGS: -I ./lib -std=c++14
 // #cgo darwin CXXFLAGS: -I ./lib  -std=gnu++14
-// #cgo darwin LDFLAGS: -L ./lib/darwin -l7zip
+// #cgo darwin,amd64 LDFLAGS: -L ./lib/darwin -l7zip
+// #cgo darwin,arm64 LDFLAGS: -L ./lib/darwin_arm -l7zip
 // #cgo linux LDFLAGS: -L ./lib/linux -Wl,--start-group  -l7zip -ldl -Wl,--end-group
 // #include "wrap.h"
 // #include <stdlib.h>

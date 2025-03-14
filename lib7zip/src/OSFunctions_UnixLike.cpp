@@ -60,7 +60,7 @@ bool LoadDllFromFolder(C7ZipDllHandler * pMainHandler, const wstring & wfolder_n
   struct dirent **namelist = NULL;
 
   if (result == 0) {
-    scandir( ".", &namelist,myselect,alphasort );
+    scandir( ".", &namelist, (int (*)(const struct dirent *))myselect, alphasort );
   }
 
   result = chdir(current_dir);
@@ -126,7 +126,7 @@ int myselect(const struct dirent * pDir )
 
     struct dirent **namelist = NULL;
 
-    scandir( ".",&namelist,myselect,alphasort );
+    scandir( ".",&namelist, (int (*)(const struct dirent *))myselect,alphasort );
 
     (void)chdir( ".." );
   }
